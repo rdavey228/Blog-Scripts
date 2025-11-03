@@ -1,3 +1,10 @@
+<#
+.SYNOPSIS
+This script prompts the user for registry configuration details and automatically creates two Intune-style PowerShell scripts: 
+a **Detection** script to verify whether a registry value exists and matches the expected value, and a **Remediation** script to create or correct that value if it does not. 
+It also creates a project folder to store the scripts.
+#>
+
 # -------------------------
 # Prompt for project & registry details
 # -------------------------
