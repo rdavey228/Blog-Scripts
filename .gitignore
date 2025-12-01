@@ -1,1 +1,5 @@
 Blog Scripts.code-workspace
+.DS_Store
+ARM Scripts/.DS_Store
+ARM Scripts/NSG Automation/.DS_Store
+Azure Scripts/Autopilot Report/Autopilot Report.ps1
