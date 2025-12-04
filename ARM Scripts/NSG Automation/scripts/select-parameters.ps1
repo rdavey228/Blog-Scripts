@@ -8,7 +8,7 @@
         5. Select parameter files for each chosen template
         6. Deploy each template/parameter combination to each selected NSG
 
-    The script supports multi-select for all stages, and loops over all combinations
+    The script supports multi-select for all stages and loops over all combinations
     to deploy consistently across multiple environments.
 
     Before execution, the script verifies if the user is logged into Azure.
@@ -100,7 +100,7 @@ Write-Host "`nSelected resource groups:"
 $selectedRGs | ForEach-Object { Write-Host "- $($_.name) (Sub: $($_.subscription))" }
 
 # -----------------------------
-# 3️⃣ Multi-select NSGs
+# 3️⃣ Multi-select NSGs across selected RGs
 # -----------------------------
 $allNSGs = @()
 
@@ -139,7 +139,7 @@ $templateIndexes = Get-MultiSelectIndexes -count $templates.Count -prompt "Selec
 $selectedTemplates = $templateIndexes | ForEach-Object { $templates[$_] }
 
 # -----------------------------
-# 5️⃣ Select parameter files per template
+# 5️⃣ Multi-select parameters per template
 # -----------------------------
 $templateParamMap = @()
 
@@ -171,7 +171,7 @@ foreach ($template in $selectedTemplates) {
 }
 
 # -----------------------------
-# 7️⃣ Deployment Loop
+# 7️⃣ Deployment Loop (subs × RGs × NSGs × templates × params)
 # -----------------------------
 foreach ($nsg in $selectedNSGs) {
 
@@ -181,10 +181,11 @@ foreach ($nsg in $selectedNSGs) {
 
         Write-Host "`nDeploying template $($item.TemplateName) to NSG $($nsg.name) in RG $($nsg.rg) (Sub: $($nsg.subscription))..."
 
+        # ✅ FIXED: Correct parameter file syntax
         $deployment = az deployment group create `
             --resource-group $nsg.rg `
             --template-file $item.Template `
-            --parameters @$item.ParamFile `
+            --parameters $item.ParamFile `
             --parameters nsgName=$($nsg.name) `
             -o json | ConvertFrom-Json
 
